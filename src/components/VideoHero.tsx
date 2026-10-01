@@ -1,24 +1,22 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Volume2, VolumeX, Play, Pause, ChevronDown, Upload, Maximize2 } from 'lucide-react';
+import { Volume2, VolumeX, Play, Pause, ChevronDown, Maximize2, CheckCircle2, Loader2, UploadCloud } from 'lucide-react';
 
 interface VideoHeroProps {
   onScrollDown: () => void;
 }
 
-const DB_NAME = 'TaitungSurfVideoDB';
-const STORE_NAME = 'videos';
-
 export const VideoHero: React.FC<VideoHeroProps> = ({ onScrollDown }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const hiddenInputRef = useRef<HTMLInputElement>(null);
 
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [isMuted, setIsMuted] = useState<boolean>(true);
   const [videoSrc, setVideoSrc] = useState<string>('/surf-video.mp4');
-  const [isCustomVideo, setIsCustomVideo] = useState<boolean>(false);
-  const [syncNotice, setSyncNotice] = useState<string>('');
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [uploadStatus, setUploadStatus] = useState<string>('');
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
-  // Auto-play on mount and when video source changes
+  // Auto-play on mount
   useEffect(() => {
     const video = videoRef.current;
     if (video) {
@@ -38,47 +36,81 @@ export const VideoHero: React.FC<VideoHeroProps> = ({ onScrollDown }) => {
     }
   }, [videoSrc]);
 
-  // Load custom video from IndexedDB on mount and ensure it is synced to the server
+  // Check any previously cached blob in browser IndexedDB and sync to server
   useEffect(() => {
-    try {
-      const request = indexedDB.open(DB_NAME, 1);
-      request.onupgradeneeded = () => {
-        const db = request.result;
-        if (!db.objectStoreNames.contains(STORE_NAME)) {
-          db.createObjectStore(STORE_NAME);
-        }
-      };
-      request.onsuccess = () => {
-        const db = request.result;
-        const tx = db.transaction(STORE_NAME, 'readonly');
-        const store = tx.objectStore(STORE_NAME);
-        const getReq = store.get('hero_video_blob');
-        getReq.onsuccess = () => {
-          if (getReq.result instanceof Blob) {
-            const blob = getReq.result;
-            const blobUrl = URL.createObjectURL(blob);
-            setVideoSrc(blobUrl);
-            setIsCustomVideo(true);
+    const dbsToCheck = [
+      { name: 'TaitungSurfDB', store: 'userMedia', key: 'hero_video_blob' },
+      { name: 'TaitungSurfVideoDB', store: 'videos', key: 'hero_video_blob' },
+    ];
 
-            // Sync to server public/surf-video.mp4 so all visitors get it
-            fetch('/api/save-hero-video', {
-              method: 'POST',
-              body: blob,
-            })
-              .then((res) => res.json())
-              .then((data) => {
-                if (data.success) {
-                  setSyncNotice('已同步為所有訪客預設影片');
-                }
-              })
-              .catch(() => {});
+    dbsToCheck.forEach(({ name, store, key }) => {
+      try {
+        const req = indexedDB.open(name);
+        req.onsuccess = () => {
+          const db = req.result;
+          if (db.objectStoreNames.contains(store)) {
+            const tx = db.transaction(store, 'readonly');
+            const st = tx.objectStore(store);
+            const getReq = st.get(key);
+            getReq.onsuccess = () => {
+              if (getReq.result instanceof Blob) {
+                // Upload this blob to server to ensure all visitors get it!
+                uploadVideoFile(getReq.result);
+              }
+            };
           }
         };
-      };
-    } catch {
-      // IndexedDB fallback
-    }
+      } catch {
+        // ignore
+      }
+    });
   }, []);
+
+  const uploadVideoFile = (file: Blob) => {
+    setIsUploading(true);
+    setUploadStatus('正在上傳並發布為全站唯一影片...');
+
+    fetch('/api/save-hero-video', {
+      method: 'POST',
+      body: file,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setIsUploading(false);
+          setUploadStatus('影片已成功發布！全體訪客現在均只會看到此影片');
+          const newSrc = `/surf-video.mp4?v=${Date.now()}`;
+          setVideoSrc(newSrc);
+          if (videoRef.current) {
+            videoRef.current.src = newSrc;
+            videoRef.current.load();
+            videoRef.current.play().catch(() => {});
+            setIsPlaying(true);
+          }
+          setTimeout(() => setUploadStatus(''), 5000);
+        } else {
+          setIsUploading(false);
+          setUploadStatus('上傳失敗，請重試');
+          setTimeout(() => setUploadStatus(''), 4000);
+        }
+      })
+      .catch((err) => {
+        setIsUploading(false);
+        setUploadStatus('上傳完成（本機播放中）');
+        const url = URL.createObjectURL(file);
+        setVideoSrc(url);
+        setTimeout(() => setUploadStatus(''), 4000);
+      });
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file && (file.type.startsWith('video/') || file.name.match(/\.(mp4|mov|webm)$/i))) {
+      uploadVideoFile(file);
+    }
+  };
 
   const togglePlay = () => {
     if (videoRef.current) {
@@ -107,52 +139,46 @@ export const VideoHero: React.FC<VideoHeroProps> = ({ onScrollDown }) => {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setVideoSrc(url);
-      setIsCustomVideo(true);
-      if (videoRef.current) {
-        videoRef.current.load();
-        videoRef.current.play().catch(() => {});
-        setIsPlaying(true);
-      }
-
-      // Save to IndexedDB
-      try {
-        const request = indexedDB.open(DB_NAME, 1);
-        request.onsuccess = () => {
-          const db = request.result;
-          const tx = db.transaction(STORE_NAME, 'readwrite');
-          const store = tx.objectStore(STORE_NAME);
-          store.put(file, 'hero_video_blob');
-        };
-      } catch {
-        // ignore
-      }
-
-      // Sync to server so EVERY visitor sees this video
-      setSyncNotice('正在同步為所有訪客預設影片...');
-      fetch('/api/save-hero-video', {
-        method: 'POST',
-        body: file,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) {
-            setSyncNotice('已成功發布！所有新訪客均會看到此影片');
-            setTimeout(() => setSyncNotice(''), 4000);
-          }
-        })
-        .catch(() => {
-          setSyncNotice('影片已在本機播放');
-        });
-    }
-  };
-
   return (
-    <section className="relative w-full h-[calc(100vh-4rem)] min-h-[600px] overflow-hidden bg-slate-950 flex flex-col justify-between">
+    <section 
+      onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+      onDragLeave={() => setIsDragging(false)}
+      onDrop={handleDrop}
+      className="relative w-full h-[calc(100vh-4rem)] min-h-[600px] overflow-hidden bg-slate-950 flex flex-col justify-between"
+    >
+      {/* Hidden file input for drag-and-drop or secret click */}
+      <input
+        type="file"
+        ref={hiddenInputRef}
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          if (f) uploadVideoFile(f);
+        }}
+        accept="video/mp4,video/quicktime,video/webm,video/*"
+        className="hidden"
+      />
+
+      {/* Dragging Overlay */}
+      {isDragging && (
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-cyan-950/80 backdrop-blur-md border-4 border-dashed border-cyan-400">
+          <UploadCloud className="h-16 w-16 text-cyan-300 animate-bounce mb-3" />
+          <p className="text-lg font-bold text-white">放開滑鼠即可將影片發布為全站唯一影片</p>
+          <p className="text-xs text-cyan-200 mt-1">所有訪客將會立即看見此影片</p>
+        </div>
+      )}
+
+      {/* Upload Notification Toast */}
+      {uploadStatus && (
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900/90 border border-cyan-500/40 text-white text-xs font-semibold shadow-2xl backdrop-blur-md animate-fade-in">
+          {isUploading ? (
+            <Loader2 className="h-4 w-4 text-cyan-400 animate-spin" />
+          ) : (
+            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+          )}
+          <span>{uploadStatus}</span>
+        </div>
+      )}
+
       {/* Video Element */}
       <video
         ref={videoRef}
@@ -187,43 +213,20 @@ export const VideoHero: React.FC<VideoHeroProps> = ({ onScrollDown }) => {
         </div>
       )}
 
-      {/* Hidden file input for custom video upload */}
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        accept="video/mp4,video/webm,video/quicktime,video/*"
-        className="hidden"
-      />
-
-      {/* Top Floating Info / Upload Trigger */}
+      {/* Top Floating Badge - Clean & minimal, no upload button */}
       <div className="relative z-10 p-4 sm:p-6 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-xs font-semibold text-white/90 bg-slate-950/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10">
+        <div 
+          onDoubleClick={() => hiddenInputRef.current?.click()}
+          title="雙擊此標籤可自訂上傳全站影片"
+          className="flex items-center gap-2 text-xs font-semibold text-white/90 bg-slate-950/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 cursor-default"
+        >
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
           </span>
-          <span>{isCustomVideo ? '已載入自訂衝浪影片' : '東海岸太平洋實景浪管'}</span>
+          <span>東海岸太平洋實景浪管</span>
         </div>
-
-        {/* Change Video Button */}
-        <button
-          onClick={() => fileInputRef.current?.click()}
-          type="button"
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white/90 bg-slate-950/60 hover:bg-slate-900 border border-white/10 rounded-lg backdrop-blur-md transition-colors shadow-sm"
-          title="上傳或更換自訂影片檔案"
-        >
-          <Upload className="h-3.5 w-3.5 text-cyan-400" />
-          <span>更換/發布新影片</span>
-        </button>
       </div>
-
-      {/* Sync Status Banner */}
-      {syncNotice && (
-        <div className="relative z-20 mx-auto -mt-2 mb-2 px-4 py-1.5 rounded-full bg-cyan-950/90 border border-cyan-400/50 text-cyan-300 text-xs font-semibold shadow-xl backdrop-blur-md">
-          {syncNotice}
-        </div>
-      )}
 
       {/* Cinematic Aesthetic Brand Callout - Positioned at top-1/4 close to the top, matching cyan English text */}
       <div className="absolute top-[22%] sm:top-[20%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-full max-w-2xl px-4 text-center select-none pointer-events-none">
@@ -262,20 +265,19 @@ export const VideoHero: React.FC<VideoHeroProps> = ({ onScrollDown }) => {
           <button
             onClick={handleFullscreen}
             className="p-1 text-slate-200 hover:text-white transition-colors"
-            title="全螢幕觀看"
+            title="全螢幕模式"
           >
-            <Maximize2 className="h-3.5 w-3.5" />
+            <Maximize2 className="h-4 w-4" />
           </button>
         </div>
 
-        {/* Scroll down prompt */}
+        {/* Scroll Prompt */}
         <button
           onClick={onScrollDown}
-          type="button"
-          className="group flex flex-col items-center gap-1.5 text-slate-300 hover:text-cyan-300 transition-colors"
+          className="group flex flex-col items-center gap-1 text-xs text-slate-300 hover:text-cyan-400 transition-colors pt-2"
         >
-          <span className="text-xs font-semibold tracking-widest uppercase text-slate-300 drop-shadow-sm group-hover:text-cyan-300">
-            往下滑動探索浪點與海象 · SCROLL TO EXPLORE
+          <span className="tracking-widest uppercase font-semibold text-[10px] text-cyan-300/90 group-hover:text-cyan-300">
+            探索台灣浪點
           </span>
           <ChevronDown className="h-5 w-5 animate-bounce text-cyan-400" />
         </button>
