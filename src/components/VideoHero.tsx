@@ -225,8 +225,8 @@ export const VideoHero: React.FC<VideoHeroProps> = ({ onScrollDown }) => {
         </div>
       )}
 
-      {/* Cinematic Aesthetic Brand Callout - Shifted up by half, no top subtitle, matching cyan English text */}
-      <div className="relative z-10 mx-auto text-center px-4 max-w-2xl select-none pointer-events-none -mt-20 sm:-mt-28">
+      {/* Cinematic Aesthetic Brand Callout - Positioned at top-1/4 close to the top, matching cyan English text */}
+      <div className="absolute top-[22%] sm:top-[20%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-full max-w-2xl px-4 text-center select-none pointer-events-none">
         <h2 className="text-4xl sm:text-6xl font-extrabold text-white tracking-wider drop-shadow-2xl">
           流浪臺灣
         </h2>
