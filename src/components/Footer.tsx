@@ -7,15 +7,18 @@ export const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start justify-between gap-10">
         {/* Brand & Mission */}
         <div className="max-w-md">
-          <div className="flex items-center gap-2 text-white font-bold text-lg tracking-tight">
+          <div className="flex items-center gap-2.5 text-white font-bold text-lg tracking-tight">
             <Waves className="h-5 w-5 text-cyan-400" />
-            <span>東浪紀行 · Taitung Surf</span>
+            <span className="text-xl font-extrabold text-white">流浪臺灣</span>
+            <span className="text-sm font-bold tracking-wider text-cyan-400 uppercase">
+              WAVES TIME TAIWAN
+            </span>
           </div>
           <p className="mt-3 text-xs text-slate-400 leading-relaxed">
             獻給每一位熱愛太平洋浪壁的海人。紀錄台東金尊、東河、都蘭、基翬與長濱的真實海象與浪人日常。出海前請審慎評估水性與潮汐，共同守護東海岸純淨海洋。
           </p>
           <div className="mt-4 flex items-center gap-2 text-[11px] text-slate-500">
-            <span>© 2026 東浪紀行 Taitung Surf Guide</span>
+            <span>© 2026 流浪臺灣 WAVES TIME TAIWAN</span>
             <span>·</span>
             <span>無痕海洋 Clean Waves Initiative</span>
           </div>

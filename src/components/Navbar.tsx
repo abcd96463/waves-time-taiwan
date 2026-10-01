@@ -22,12 +22,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz }) => {
         {/* Zone 1: Single text element wordmark */}
         <a
           href="#"
-          className="flex items-center gap-2 text-lg font-bold tracking-tight text-white transition-opacity hover:opacity-90"
+          className="flex items-baseline gap-2.5 transition-opacity hover:opacity-90"
         >
-          <Waves className="h-5 w-5 text-cyan-400 shrink-0" />
-          <span className="font-extrabold tracking-tight">東浪紀行</span>
-          <span className="text-xs font-normal tracking-wider text-cyan-400/90 uppercase hidden sm:inline">
-            Taitung Surf
+          <Waves className="h-5 w-5 text-cyan-400 shrink-0 self-center" />
+          <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
+            流浪臺灣
+          </span>
+          <span className="text-sm sm:text-base font-bold tracking-wider text-cyan-400 uppercase hidden min-[440px]:inline">
+            WAVES TIME TAIWAN
           </span>
         </a>
 

@@ -9,7 +9,7 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onExploreSpots, onOpenSimulator, onOpenQuiz }) => {
   return (
-    <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-slate-950">
+    <section id="content" className="relative min-h-[92vh] flex items-center justify-center overflow-hidden bg-slate-950">
       {/* Background visual asset with contrast scrim */}
       <div className="absolute inset-0 z-0">
         <img

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Navbar } from './components/Navbar';
+import { VideoHero } from './components/VideoHero';
 import { Hero } from './components/Hero';
 import { SpotExplorer } from './components/SpotExplorer';
 import { SurfForecastSimulator } from './components/SurfForecastSimulator';
@@ -19,6 +20,13 @@ export default function App() {
     const simElement = document.getElementById('simulator');
     if (simElement) {
       simElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleScrollToContent = () => {
+    const el = document.getElementById('content');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -43,7 +51,10 @@ export default function App() {
 
       {/* Main Content */}
       <main className="flex-1">
-        {/* Hero Section */}
+        {/* Full-Screen Video Hero at the very top */}
+        <VideoHero onScrollDown={handleScrollToContent} />
+
+        {/* Text & Intro Hero Section (Revealed when scrolling down) */}
         <Hero
           onExploreSpots={handleExploreSpots}
           onOpenSimulator={handleOpenSimulator}
