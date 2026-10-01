@@ -59,7 +59,7 @@ export const VideoHero: React.FC<VideoHeroProps> = ({ onScrollDown }) => {
   };
 
   return (
-    <section className="relative w-full h-[calc(100vh-4rem)] min-h-[600px] overflow-hidden bg-slate-950 flex flex-col justify-between">
+    <section className="relative w-full h-[calc(100vh-4rem)] min-h-[600px] overflow-hidden bg-slate-950 flex flex-col justify-end">
       {/* Video Element - Permanently plays user's 1080p surf video */}
       <video
         ref={videoRef}
@@ -93,17 +93,6 @@ export const VideoHero: React.FC<VideoHeroProps> = ({ onScrollDown }) => {
           </div>
         </div>
       )}
-
-      {/* Top Floating Badge - Clean & minimal */}
-      <div className="relative z-10 p-4 sm:p-6 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-xs font-semibold text-white/90 bg-slate-950/60 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
-          </span>
-          <span>東海岸太平洋實景浪管</span>
-        </div>
-      </div>
 
       {/* Cinematic Aesthetic Brand Callout - Positioned at top-1/4 close to the top, matching cyan English text */}
       <div className="absolute top-[22%] sm:top-[20%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-full max-w-2xl px-4 text-center select-none pointer-events-none">
