@@ -17,6 +17,26 @@ export const VideoHero: React.FC<VideoHeroProps> = ({ onScrollDown }) => {
   const [videoSrc, setVideoSrc] = useState<string>('/surf-video.mp4');
   const [isCustomVideo, setIsCustomVideo] = useState<boolean>(false);
 
+  // Auto-play on mount and when video source changes
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.muted = true;
+      video.defaultMuted = true;
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch((err) => {
+            console.warn('Autoplay prevented by browser, waiting for user click:', err);
+            setIsPlaying(false);
+          });
+      }
+    }
+  }, [videoSrc]);
+
   // Load custom video from IndexedDB on mount if present
   useEffect(() => {
     try {
@@ -105,16 +125,35 @@ export const VideoHero: React.FC<VideoHeroProps> = ({ onScrollDown }) => {
       <video
         ref={videoRef}
         src={videoSrc}
-        poster="/src/assets/images/hero_taitung_jinzun_surf_1790862309376.jpg"
         autoPlay
         loop
         muted={isMuted}
         playsInline
-        className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
+        preload="auto"
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        className="absolute inset-0 w-full h-full object-cover object-center cursor-pointer"
+        onClick={togglePlay}
       />
 
       {/* Subtle overlay to enhance contrast without hiding the video */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40 pointer-events-none" />
+      <div 
+        onClick={togglePlay}
+        className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40 cursor-pointer" 
+      />
+
+      {/* Big Play Button Overlay when paused */}
+      {!isPlaying && (
+        <div 
+          onClick={togglePlay}
+          className="absolute inset-0 z-20 flex items-center justify-center bg-slate-950/30 backdrop-blur-[2px] cursor-pointer"
+        >
+          <div className="flex flex-col items-center gap-2 p-5 rounded-2xl bg-slate-900/80 border border-white/20 text-white shadow-2xl hover:scale-105 transition-transform">
+            <Play className="h-10 w-10 text-cyan-400 fill-cyan-400" />
+            <span className="text-xs font-semibold tracking-wider uppercase">點擊開始播放影片</span>
+          </div>
+        </div>
+      )}
 
       {/* Hidden file input for custom video upload */}
       <input
