@@ -16,6 +16,7 @@ export const VideoHero: React.FC<VideoHeroProps> = ({ onScrollDown }) => {
   const [isMuted, setIsMuted] = useState<boolean>(true);
   const [videoSrc, setVideoSrc] = useState<string>('/surf-video.mp4');
   const [isCustomVideo, setIsCustomVideo] = useState<boolean>(false);
+  const [syncNotice, setSyncNotice] = useState<string>('');
 
   // Auto-play on mount and when video source changes
   useEffect(() => {
@@ -37,7 +38,7 @@ export const VideoHero: React.FC<VideoHeroProps> = ({ onScrollDown }) => {
     }
   }, [videoSrc]);
 
-  // Load custom video from IndexedDB on mount if present
+  // Load custom video from IndexedDB on mount and ensure it is synced to the server
   useEffect(() => {
     try {
       const request = indexedDB.open(DB_NAME, 1);
@@ -54,9 +55,23 @@ export const VideoHero: React.FC<VideoHeroProps> = ({ onScrollDown }) => {
         const getReq = store.get('hero_video_blob');
         getReq.onsuccess = () => {
           if (getReq.result instanceof Blob) {
-            const blobUrl = URL.createObjectURL(getReq.result);
+            const blob = getReq.result;
+            const blobUrl = URL.createObjectURL(blob);
             setVideoSrc(blobUrl);
             setIsCustomVideo(true);
+
+            // Sync to server public/surf-video.mp4 so all visitors get it
+            fetch('/api/save-hero-video', {
+              method: 'POST',
+              body: blob,
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.success) {
+                  setSyncNotice('已同步為所有訪客預設影片');
+                }
+              })
+              .catch(() => {});
           }
         };
       };
@@ -116,6 +131,23 @@ export const VideoHero: React.FC<VideoHeroProps> = ({ onScrollDown }) => {
       } catch {
         // ignore
       }
+
+      // Sync to server so EVERY visitor sees this video
+      setSyncNotice('正在同步為所有訪客預設影片...');
+      fetch('/api/save-hero-video', {
+        method: 'POST',
+        body: file,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            setSyncNotice('已成功發布！所有新訪客均會看到此影片');
+            setTimeout(() => setSyncNotice(''), 4000);
+          }
+        })
+        .catch(() => {
+          setSyncNotice('影片已在本機播放');
+        });
     }
   };
 
@@ -182,19 +214,23 @@ export const VideoHero: React.FC<VideoHeroProps> = ({ onScrollDown }) => {
           title="上傳或更換自訂影片檔案"
         >
           <Upload className="h-3.5 w-3.5 text-cyan-400" />
-          <span>更換/上傳影片</span>
+          <span>更換/發布新影片</span>
         </button>
       </div>
 
-      {/* Center Cinematic Aesthetic Brand Callout */}
-      <div className="relative z-10 mx-auto text-center px-4 max-w-2xl select-none pointer-events-none">
-        <div className="text-xs sm:text-sm font-bold tracking-[0.3em] uppercase text-cyan-300 drop-shadow-md mb-2">
-          TAITUNG PACIFIC SWELL
+      {/* Sync Status Banner */}
+      {syncNotice && (
+        <div className="relative z-20 mx-auto -mt-2 mb-2 px-4 py-1.5 rounded-full bg-cyan-950/90 border border-cyan-400/50 text-cyan-300 text-xs font-semibold shadow-xl backdrop-blur-md">
+          {syncNotice}
         </div>
-        <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-wider drop-shadow-lg">
+      )}
+
+      {/* Cinematic Aesthetic Brand Callout - Shifted up by half, no top subtitle, matching cyan English text */}
+      <div className="relative z-10 mx-auto text-center px-4 max-w-2xl select-none pointer-events-none -mt-20 sm:-mt-28">
+        <h2 className="text-4xl sm:text-6xl font-extrabold text-white tracking-wider drop-shadow-2xl">
           流浪臺灣
         </h2>
-        <div className="text-xs sm:text-sm font-semibold tracking-widest text-slate-200/90 uppercase drop-shadow mt-1">
+        <div className="text-sm sm:text-base font-bold tracking-wider text-cyan-400 uppercase drop-shadow-lg mt-2">
           WAVES TIME TAIWAN
         </div>
       </div>
