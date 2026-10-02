@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { SurfSpot, WindDirection } from '../types/surf';
 import { calculateSpotSurfScore } from '../utils/surfScoreUtils';
 import { Sliders, Sparkles, CheckCircle2, ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
@@ -11,14 +11,43 @@ export const SpotSimulatorSidebarCard: React.FC<SpotSimulatorSidebarCardProps> =
   // Unit toggle for wave face height: 'metric' (公尺 m) vs 'imperial' (英呎 ft)
   const [unit, setUnit] = useState<'metric' | 'imperial'>('metric');
 
-  // Simulation parameter states initialized from spot live condition
+  // Simulation parameter states initialized from spot real live condition
   const defaultSwell = spot.liveCondition ? parseFloat(spot.liveCondition.swell) || 1.8 : 1.8;
   const defaultPeriod = spot.liveCondition ? parseInt(spot.liveCondition.period) || 11 : 11;
+  const initialWindSpeed = spot.liveCondition?.wind?.match(/(\d+)\s*kt/i) 
+    ? parseInt(spot.liveCondition.wind.match(/(\d+)\s*kt/i)![1], 10) 
+    : 8;
+  const initialWindDir: WindDirection = spot.liveCondition?.wind?.includes('東北') 
+    ? 'NE' 
+    : spot.liveCondition?.wind?.includes('東南') 
+    ? 'SE' 
+    : spot.liveCondition?.wind?.includes('西北') 
+    ? 'NW' 
+    : spot.liveCondition?.wind?.includes('西南') 
+    ? 'SW' 
+    : spot.liveCondition?.wind?.includes('南') 
+    ? 'S' 
+    : spot.liveCondition?.wind?.includes('北') 
+    ? 'N' 
+    : spot.liveCondition?.wind?.includes('東') 
+    ? 'E' 
+    : spot.liveCondition?.wind?.includes('西') 
+    ? 'W' 
+    : 'SW';
+
   const [swellHeight, setSwellHeight] = useState<number>(defaultSwell);
   const [wavePeriod, setWavePeriod] = useState<number>(defaultPeriod);
-  const [windDir, setWindDir] = useState<WindDirection>('SW');
-  const [windSpeed, setWindSpeed] = useState<number>(9);
+  const [windDir, setWindDir] = useState<WindDirection>(initialWindDir);
+  const [windSpeed, setWindSpeed] = useState<number>(initialWindSpeed);
   const [tidePhase, setTidePhase] = useState<'low' | 'mid-rising' | 'high' | 'mid-falling'>('mid-rising');
+
+  // Reset to current spot's real live conditions when spot changes
+  useEffect(() => {
+    setSwellHeight(defaultSwell);
+    setWavePeriod(defaultPeriod);
+    setWindSpeed(initialWindSpeed);
+    setWindDir(initialWindDir);
+  }, [spot.id]);
 
   // Collapsible drawer for advanced sliders
   const [showSliders, setShowSliders] = useState<boolean>(false);

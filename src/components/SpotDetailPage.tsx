@@ -12,11 +12,11 @@ import {
   Compass, 
   Sparkles, 
   Calendar, 
-  ShieldCheck, 
   Car, 
   ChevronRight,
   Sliders,
-  Anchor
+  Anchor,
+  Camera
 } from 'lucide-react';
 
 interface SpotDetailPageProps {
@@ -73,10 +73,19 @@ export const SpotDetailPage: React.FC<SpotDetailPageProps> = ({
         <img
           src={spot.image}
           alt={spot.nameZh}
-          className="w-full h-full object-cover object-center filter brightness-90"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = '/src/assets/images/hero_taitung_jinzun_surf_1790862309376.jpg';
+          }}
+          className="w-full h-full object-cover object-center filter brightness-90 transition-transform duration-700 hover:scale-105"
         />
         {/* Gradients */}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/30" />
+
+        {/* Real Spot Photography Badge */}
+        <div className="absolute top-4 right-4 z-10 px-3 py-1.5 bg-black/60 backdrop-blur-md rounded-full border border-white/15 text-[11px] text-slate-200 font-medium flex items-center gap-1.5 shadow-lg">
+          <Camera className="h-3.5 w-3.5 text-cyan-400" />
+          <span>{spot.shortName || spot.nameZh.slice(0, 3)} 實地浪點美照</span>
+        </div>
 
         {/* Hero Content */}
         <div className="absolute bottom-0 inset-x-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 z-10">
@@ -132,37 +141,39 @@ export const SpotDetailPage: React.FC<SpotDetailPageProps> = ({
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800 flex flex-col justify-between">
                   <span className="block text-xs text-slate-400">湧浪大小</span>
-                  <span className="block text-xl sm:text-2xl font-black text-cyan-300 mt-1">
+                  <span className="block text-xl sm:text-2xl font-black text-cyan-300 my-1">
                     {spot.liveCondition?.swell || '1.6m'}
                   </span>
-                  <span className="block text-[11px] text-slate-500 mt-0.5">常態 {spot.waveHeightRange}</span>
+                  <span className="block text-[11px] text-slate-500">常態 {spot.waveHeightRange}</span>
                 </div>
 
-                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800 flex flex-col justify-between">
                   <span className="block text-xs text-slate-400">週期</span>
-                  <span className="block text-xl sm:text-2xl font-black text-cyan-300 mt-1">
+                  <span className="block text-xl sm:text-2xl font-black text-cyan-300 my-1">
                     {spot.liveCondition?.period || '11s'}
                   </span>
-                  <span className="block text-[11px] text-slate-500 mt-0.5">長週期推進力</span>
+                  <span className="block text-[11px] text-slate-500">長週期推進力</span>
                 </div>
 
-                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800 flex flex-col justify-between">
                   <span className="block text-xs text-slate-400">風向風速</span>
-                  <span className="block text-sm sm:text-base font-black text-cyan-300 mt-2 truncate" title={spot.liveCondition?.wind}>
-                    {spot.liveCondition?.wind || '10kt 離岸風'}
-                  </span>
-                  <span className="block text-[11px] text-slate-500 mt-0.5">最佳: {spot.bestWind.split('·')[0]}</span>
+                  <div className="my-auto py-1">
+                    <span className="block text-sm sm:text-base font-black text-cyan-300 leading-snug break-words">
+                      {spot.liveCondition?.wind || '10kt 離岸風'}
+                    </span>
+                  </div>
+                  <span className="block text-[11px] text-slate-500">最佳: {spot.bestWind.split('·')[0]}</span>
                 </div>
 
-                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+                <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800 flex flex-col justify-between">
                   <span className="block text-xs text-slate-400">水溫</span>
-                  <span className="block text-xl sm:text-2xl font-black text-cyan-300 mt-1 flex items-center justify-center gap-1">
+                  <span className="block text-xl sm:text-2xl font-black text-cyan-300 my-1 flex items-center justify-center gap-1">
                     <Thermometer className="h-4 w-4 text-cyan-400" />
                     {spot.liveCondition?.waterTemp || '24°C'}
                   </span>
-                  <span className="block text-[11px] text-slate-500 mt-0.5">{spot.liveCondition?.tideStatus || '中潮起漲'}</span>
+                  <span className="block text-[11px] text-slate-500">{spot.liveCondition?.tideStatus || '中潮起漲'}</span>
                 </div>
               </div>
             </div>
@@ -250,49 +261,6 @@ export const SpotDetailPage: React.FC<SpotDetailPageProps> = ({
           <div className="lg:col-span-4 space-y-6">
             {/* 1. 實時海象浪況模擬分析儀（置於右側欄最上方） */}
             <SpotSimulatorSidebarCard spot={spot} />
-
-            {/* Quick Specs Card */}
-            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-              <h3 className="text-base font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-slate-800 pb-3">
-                <ShieldCheck className="h-4 w-4 text-cyan-400" />
-                <span>浪點規格速覽</span>
-              </h3>
-
-              <div className="space-y-3 text-xs">
-                <div>
-                  <span className="text-slate-400 block mb-1">適合板型推薦</span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {spot.idealBoard.map((board, i) => (
-                      <span key={i} className="bg-slate-800 text-slate-200 px-2.5 py-1 rounded font-medium border border-slate-700">
-                        {board}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <span className="text-slate-400 block mb-1">地理座標</span>
-                  <span className="font-mono text-slate-300">
-                    {spot.lat.toFixed(4)}°N, {spot.lng.toFixed(4)}°E
-                  </span>
-                </div>
-
-                <div>
-                  <span className="text-slate-400 block mb-1">交通公路里程</span>
-                  <span className="text-slate-300">{spot.highwayKm}</span>
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <button
-                  onClick={() => onOpenSimulator(spot)}
-                  className="w-full py-2.5 px-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-md shadow-cyan-950"
-                >
-                  <Sliders className="h-3.5 w-3.5" />
-                  <span>使用此浪點進行海洋模擬</span>
-                </button>
-              </div>
-            </div>
 
             {/* Access & Transportation Guide */}
             {spot.accessGuide && (

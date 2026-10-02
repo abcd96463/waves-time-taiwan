@@ -511,13 +511,16 @@ export const TaiwanSpotsMap: React.FC<TaiwanSpotsMapProps> = ({ onSelectSpot }) 
 
                 {/* 浪況綜合評分 (放在浪點名稱旁/右上) */}
                 <div className="shrink-0 bg-slate-950/90 border border-cyan-400/50 rounded-2xl px-3 py-1.5 shadow-lg flex flex-col items-end">
-                  <span className="text-[10px] text-slate-400 font-bold tracking-wider uppercase">浪況綜合評分</span>
+                  <span className="text-[10px] text-slate-400 font-bold tracking-wider uppercase">即時浪況評分</span>
                   <div className="flex items-baseline gap-1">
                     <span className="text-2xl sm:text-3xl font-black font-mono text-cyan-300">
                       {activeSpotAnalysis.finalScore}
                     </span>
                     <span className="text-xs text-slate-500 font-mono">/100</span>
                   </div>
+                  <span className={`text-[10px] font-bold px-1.5 py-0.2 rounded border mt-0.5 ${activeSpotAnalysis.badgeColor}`}>
+                    {activeSpotAnalysis.status.split(' ')[0]}
+                  </span>
                 </div>
               </div>
 
@@ -545,9 +548,9 @@ export const TaiwanSpotsMap: React.FC<TaiwanSpotsMapProps> = ({ onSelectSpot }) 
                       {activeSpot.liveCondition?.period || '11s'}
                     </span>
                   </div>
-                  <div className="px-1">
-                    <span className="block text-[11px] text-slate-400 font-medium">風速</span>
-                    <span className="block text-xs sm:text-sm font-extrabold text-cyan-300 mt-1 truncate" title={activeSpot.liveCondition?.wind}>
+                  <div className="px-1 flex flex-col justify-between">
+                    <span className="block text-[11px] text-slate-400 font-medium">風向風速</span>
+                    <span className="block text-xs sm:text-sm font-extrabold text-cyan-300 mt-0.5 leading-snug break-words" title={activeSpot.liveCondition?.wind}>
                       {activeSpot.liveCondition?.wind || '12kt 偏北風'}
                     </span>
                   </div>
