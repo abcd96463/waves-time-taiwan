@@ -174,7 +174,7 @@ export const SurfForecastSimulator: React.FC<SurfForecastSimulatorProps> = ({ in
           onClick={() => applyPreset('epic')}
           className="px-3 py-1.5 text-xs font-medium text-slate-300 bg-slate-900 border border-slate-800 rounded-md hover:border-cyan-400 hover:text-white transition-colors"
         >
-          金尊 WSL 國際賽日 (2.2m · 13s)
+          金樽 WSL 國際賽日 (2.2m · 13s)
         </button>
         <button
           onClick={() => applyPreset('dawn')}

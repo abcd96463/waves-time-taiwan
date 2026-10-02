@@ -126,18 +126,18 @@ export const SeasonGuide: React.FC = () => {
           <div className="max-w-2xl">
             <div className="flex items-center gap-2 text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">
               <Trophy className="h-4 w-4" />
-              <span>年度最高衝浪殿堂 · 每年11月金尊登場</span>
+              <span>年度最高衝浪殿堂 · 每年11月金樽登場</span>
             </div>
             <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
               臺灣國際衝浪公開賽 (Taiwan Open of Surfing)
             </h3>
             <p className="mt-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
-              台東金尊漁港是全台灣唯一連續多年獲得 WSL（世界衝浪聯盟）認證的世界巡迴積分賽主辦地。每年11月，來自澳洲、夏威夷、日本、印尼等全球頂尖長板與短板衝浪名將齊聚台東，在磅礡的太平洋湧浪中角逐冠軍榮銜。
+              台東金樽漁港是全台灣唯一連續多年獲得 WSL（世界衝浪聯盟）認證的世界巡迴積分賽主辦地。每年11月，來自澳洲、夏威夷、日本、印尼等全球頂尖長板與短板衝浪名將齊聚台東，在磅礡的太平洋湧浪中角逐冠軍榮銜。
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-slate-400">
               <span className="flex items-center gap-1.5">
                 <MapPin className="h-3.5 w-3.5 text-amber-400" />
-                金尊漁港雙陸連島起浪區
+                金樽漁港雙陸連島起浪區
               </span>
               <span>·</span>
               <span>WSL QS / Longboard Tour 規格賽制</span>
@@ -149,7 +149,7 @@ export const SeasonGuide: React.FC = () => {
           <div className="p-5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs space-y-3 shrink-0 md:w-80">
             <div className="font-bold text-white text-sm">浪人觀賽最佳攻略</div>
             <div className="text-slate-300 leading-relaxed">
-              最佳觀景視野位於「金尊遊憩區咖啡觀景台」，俯瞰整片沙灘左右浪壁一覽無遺；亦可攜帶野餐墊至防波堤旁沙灘近距離感受水花激盪。
+              最佳觀景視野位於「金樽遊憩區咖啡觀景台」，俯瞰整片沙灘左右浪壁一覽無遺；亦可攜帶野餐墊至防波堤旁沙灘近距離感受水花激盪。
             </div>
             <div className="pt-2 border-t border-slate-800 text-[11px] text-amber-400">
               賽事期間同時舉辦東海岸文創浪人市集、原民音樂野台與衝浪體驗工作坊。

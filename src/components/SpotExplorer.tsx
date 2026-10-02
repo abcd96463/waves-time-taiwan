@@ -33,7 +33,7 @@ export const SpotExplorer: React.FC<SpotExplorerProps> = ({ onSelectSpotForSimul
           六大經典浪點 · 太平洋的每一次浪湧
         </h2>
         <p className="mt-3 text-slate-400 text-sm sm:text-base leading-relaxed">
-          從初學者踏出第一步的都蘭溫柔黑沙灘，到世界衝浪公開賽激戰的金尊長浪，再到考驗技術的基翬火山礁石管浪。挑選適合你當前階段的海域，安全享受浪壁馳騁。
+          從初學者踏出第一步的都蘭溫柔黑沙灘，到世界衝浪公開賽激戰的金樽長浪，再到考驗技術的基翬火山礁石管浪。挑選適合你當前階段的海域，安全享受浪壁馳騁。
         </p>
       </div>
 
@@ -145,7 +145,7 @@ export const SpotExplorer: React.FC<SpotExplorerProps> = ({ onSelectSpotForSimul
         <div className="flex items-center gap-2">
           <MapPin className="h-4 w-4 text-cyan-400 shrink-0" />
           <span className="font-semibold text-slate-200">台11線由北至南浪點分佈：</span>
-          <span className="hidden sm:inline">烏石鼻 (長濱 98K) → 基翬 (成功 116K) → 東河河口 (131.5K) → 金尊 (136.5K) → 都蘭 (146K) ；南迴：大溪 (台9線 409K)</span>
+          <span className="hidden sm:inline">烏石鼻 (長濱 98K) → 基翬 (成功 116K) → 東河河口 (131.5K) → 金樽 (136.5K) → 都蘭 (146K) ；南迴：大溪 (台9線 409K)</span>
         </div>
         <span className="text-cyan-400 font-medium">共顯示 {filteredSpots.length} 個符合條件海域</span>
       </div>

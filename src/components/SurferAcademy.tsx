@@ -24,19 +24,19 @@ export const SurferAcademy: React.FC = () => {
       name: '6\'6 ~ 7\'6 中長板 (Mid-Length / Funboard)',
       level: '初中階進階過渡',
       desc: '兼具長板划水輕鬆起步早的優勢，又擁有比長板更靈敏的轉向弧度，是浪況小至中等時最萬能的武器。',
-      idealSpot: '金尊沙灘、都蘭海灘、大溪河口',
+      idealSpot: '金樽沙灘、都蘭海灘、大溪河口',
     },
     {
       name: '5\'4 ~ 5\'10 復古雙舵魚板 (Twin Fin Fish)',
       level: '中進階 / 速度玩家',
       desc: '寬平的板身與燕尾（Swallow Tail）能產生極致的下浪滑行速度，在稍軟但平整的浪壁上如滑雪般滑順暢快。',
-      idealSpot: '東河河口、金尊小浪日',
+      idealSpot: '東河河口、金樽小浪日',
     },
     {
       name: '5\'10 ~ 6\'2 性能短板 (Performance Shortboard)',
       level: '進階 / 激進動作好手',
       desc: '翹度高、板緣薄，反應敏銳，專為在浪壁最陡處做出垂直上浪（Snap/Top Turn）、挖浪管（Tube Riding）與空中迴轉而生。',
-      idealSpot: '金尊大浪、基翬火山礁岩管浪',
+      idealSpot: '金樽大浪、基翬火山礁岩管浪',
     },
   ];
 

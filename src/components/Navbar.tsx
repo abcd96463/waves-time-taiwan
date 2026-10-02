@@ -3,26 +3,39 @@ import { Menu, X, Compass, Waves } from 'lucide-react';
 
 interface NavbarProps {
   onOpenQuiz: () => void;
+  onNavigateSpots?: () => void;
+  onGoHome?: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz, onNavigateSpots, onGoHome }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { label: '經典浪點', href: '#spots' },
+    { label: '全臺浪點', href: '#spots', isSpotLink: true },
     { label: '浪況模擬', href: '#simulator' },
     { label: '四季湧浪', href: '#seasons' },
     { label: '浪人守則', href: '#academy' },
     { label: '旅行規劃', href: '#planner' },
   ];
 
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, link: typeof navLinks[0]) => {
+    if (link.isSpotLink && onNavigateSpots) {
+      e.preventDefault();
+      onNavigateSpots();
+    } else if (onGoHome) {
+      // If we are in detail view, returning to home section
+      onGoHome();
+    }
+  };
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Zone 1: Single text element wordmark */}
-        <a
-          href="#"
-          className="flex items-baseline gap-2.5 transition-opacity hover:opacity-90"
+        <button
+          onClick={onGoHome}
+          type="button"
+          className="flex items-baseline gap-2.5 transition-opacity hover:opacity-90 text-left cursor-pointer"
         >
           <Waves className="h-5 w-5 text-cyan-400 shrink-0 self-center" />
           <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
@@ -31,7 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz }) => {
           <span className="text-sm sm:text-base font-bold tracking-wider text-cyan-400 uppercase hidden min-[440px]:inline">
             WAVES TIME TAIWAN
           </span>
-        </a>
+        </button>
 
         {/* Zone 2: 4-6 clean text navigation links */}
         <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-slate-300">
@@ -39,6 +52,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz }) => {
             <a
               key={link.href}
               href={link.href}
+              onClick={(e) => handleLinkClick(e, link)}
               className="transition-colors hover:text-cyan-400 whitespace-nowrap"
             >
               {link.label}
@@ -76,7 +90,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenQuiz }) => {
             <a
               key={link.href}
               href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={(e) => {
+                setMobileMenuOpen(false);
+                handleLinkClick(e, link);
+              }}
               className="block text-sm font-medium text-slate-300 hover:text-cyan-400 py-1"
             >
               {link.label}

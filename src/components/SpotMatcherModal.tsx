@@ -177,7 +177,7 @@ export const SpotMatcherModal: React.FC<SpotMatcherModalProps> = ({ isOpen, onCl
             </h3>
             <div className="space-y-2.5 pt-2">
               {[
-                { id: 'autumn_winter', title: '秋冬黃金期 (10月 - 3月)', desc: '東北季風湧浪鼎盛，金尊賽季，黑潮溫水避寒。' },
+                { id: 'autumn_winter', title: '秋冬黃金期 (10月 - 3月)', desc: '東北季風湧浪鼎盛，金樽賽季，黑潮溫水避寒。' },
                 { id: 'spring', title: '春季過渡期 (4月 - 6月)', desc: '天氣舒適無雨，風浪溫和平整，最適合集訓。' },
                 { id: 'summer', title: '夏日陽光期 (7月 - 9月)', desc: '免穿防寒衣，享受熱帶海島氛圍或追逐颱風長浪。' },
                 { id: 'anytime', title: '隨性浪人，哪裡有浪就往哪裡出發', desc: '只要太平洋起浪，隨時帶上浪板跳上火車。' },

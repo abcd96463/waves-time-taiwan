@@ -3,11 +3,23 @@ export type WaveType = 'beach' | 'point' | 'reef' | 'rivermouth';
 export type WaveDirection = 'left' | 'right' | 'both';
 export type TidePreference = 'low' | 'mid-rising' | 'high' | 'mid-falling' | 'all';
 export type WindDirection = 'NE' | 'E' | 'SE' | 'S' | 'SW' | 'W' | 'NW' | 'N';
+export type SurfRegion = 'north' | 'northeast' | 'east' | 'south' | 'west';
+
+export interface SpotLiveCondition {
+  swell: string;       // 湧浪大小，例如 "1.8m"
+  period: string;      // 週期，例如 "11s"
+  wind: string;        // 風速與風向，例如 "12kt 偏北風"
+  waterTemp?: string;  // 水溫，例如 "24°C"
+  tideStatus?: string; // 潮位，例如 "中潮起漲"
+}
 
 export interface SurfSpot {
   id: string;
   nameZh: string;
+  shortName?: string; // 2~3字精簡浪點名稱（如：金樽、東河、烏石港）
   nameEn: string;
+  region?: SurfRegion;
+  regionLabel?: string;
   township: string;
   highwayKm: string;
   level: SurfLevel;
@@ -24,12 +36,16 @@ export interface SurfSpot {
   idealBoard: string[];
   hazards: string[];
   description: string;
+  briefIntro?: string; // 浪點簡介（浮動框顯示）
+  liveCondition?: SpotLiveCondition; // 湧浪大小 週期 風速
   insiderTip: string;
   image: string;
   lat: number;
   lng: number;
   highlightTag: string;
   isWSLSpot?: boolean;
+  facilities?: string[];
+  accessGuide?: string;
 }
 
 export interface SurfCondition {

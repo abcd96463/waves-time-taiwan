@@ -48,7 +48,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreSpots, onOpenSimulator, onO
 
         {/* Value proposition paragraph */}
         <p className="mt-6 text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed">
-          從金尊世界衝浪聯盟 (WSL) 錦標賽主場、東河長板定點河口，到都蘭黑沙灘浪人聚落與基翬傳奇礁石管浪。四季太平洋湧浪永不間歇，為每一次破曉划水注入最純粹的野性生命力。
+          從金樽世界衝浪聯盟 (WSL) 錦標賽主場、東河長板定點河口，到都蘭黑沙灘浪人聚落與基翬傳奇礁石管浪。四季太平洋湧浪永不間歇，為每一次破曉划水注入最純粹的野性生命力。
         </p>
 
         {/* Primary & secondary action group */}
@@ -58,7 +58,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreSpots, onOpenSimulator, onO
             type="button"
             className="px-6 py-3 text-sm font-semibold text-slate-950 bg-cyan-400 rounded-lg hover:bg-cyan-300 transition-all shadow-lg shadow-cyan-950/50 whitespace-nowrap active:scale-95"
           >
-            探索 6 大經典浪點
+            探索全臺浪點地圖
           </button>
           <button
             onClick={onOpenSimulator}
@@ -124,7 +124,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreSpots, onOpenSimulator, onO
               <div className="text-lg font-bold text-white font-mono tabular-nums mt-0.5">
                 起漲潮 <span className="text-xs font-sans font-normal text-slate-400">+1.2m</span>
               </div>
-              <div className="text-[11px] text-cyan-300">東河/金尊黃金期</div>
+              <div className="text-[11px] text-cyan-300">東河/金樽黃金期</div>
             </div>
           </div>
         </div>

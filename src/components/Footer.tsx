@@ -15,7 +15,7 @@ export const Footer: React.FC = () => {
             </span>
           </div>
           <p className="mt-3 text-xs text-slate-400 leading-relaxed">
-            獻給每一位熱愛太平洋浪壁的海人。紀錄台東金尊、東河、都蘭、基翬與長濱的真實海象與浪人日常。出海前請審慎評估水性與潮汐，共同守護東海岸純淨海洋。
+            獻給每一位熱愛太平洋浪壁的海人。紀錄台東金樽、東河、都蘭、基翬與長濱的真實海象與浪人日常。出海前請審慎評估水性與潮汐，共同守護東海岸純淨海洋。
           </p>
           <div className="mt-4 flex items-center gap-2 text-[11px] text-slate-500">
             <span>© 2026 流浪臺灣 WAVES TIME TAIWAN</span>
@@ -31,7 +31,7 @@ export const Footer: React.FC = () => {
               浪點分佈
             </div>
             <ul className="space-y-2 text-slate-400">
-              <li><a href="#spots" className="hover:text-cyan-400 transition-colors">金尊漁港 (WSL主場)</a></li>
+              <li><a href="#spots" className="hover:text-cyan-400 transition-colors">金樽漁港 (WSL主場)</a></li>
               <li><a href="#spots" className="hover:text-cyan-400 transition-colors">東河河口 (長板定點)</a></li>
               <li><a href="#spots" className="hover:text-cyan-400 transition-colors">都蘭黑沙灘 (新手友善)</a></li>
               <li><a href="#spots" className="hover:text-cyan-400 transition-colors">基翬礁石管浪 (進階)</a></li>
