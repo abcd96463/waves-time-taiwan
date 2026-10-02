@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { SurfSpot } from '../types/surf';
 import { SURF_SPOTS } from '../data/surfData';
+import { TideChartSection } from './TideChartSection';
+import { SpotSimulatorSidebarCard } from './SpotSimulatorSidebarCard';
 import { 
   ArrowLeft, 
   MapPin, 
@@ -8,7 +10,6 @@ import {
   Wind, 
   Thermometer, 
   Compass, 
-  AlertTriangle, 
   Sparkles, 
   Calendar, 
   ShieldCheck, 
@@ -241,36 +242,15 @@ export const SpotDetailPage: React.FC<SpotDetailPageProps> = ({
               </div>
             </section>
 
-            {/* Section 3: Safety & Hazards */}
-            <section className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8 backdrop-blur-md">
-              <h2 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2 mb-4">
-                <span className="h-5 w-1.5 bg-amber-400 rounded-full"></span>
-                <span>安全警告與下水風險 (Hazards)</span>
-              </h2>
-
-              <div className="bg-amber-950/20 border border-amber-500/30 rounded-xl p-4 sm:p-5 mb-4">
-                <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider mb-2">
-                  <AlertTriangle className="h-4 w-4" />
-                  <span>海洋安全第一守則</span>
-                </div>
-                <ul className="space-y-2 text-xs sm:text-sm text-slate-300">
-                  {spot.hazards.map((h, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <span className="text-amber-400 font-bold">•</span>
-                      <span>{h}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <p className="text-xs text-slate-400 leading-relaxed">
-                衝浪為具有一定風險的水上運動，請依個人真實體能與能力選擇浪點，切勿單獨在無人看顧的陌生海域下水。下水前請在岸上仔細觀察浪組間隔（Set）、水流通道與其他浪人的路線至少 10 分鐘。
-              </p>
-            </section>
+            {/* Section 3: Tide Forecast & 24h Tide Chart (滿潮與退潮時間及圖表) */}
+            <TideChartSection spot={spot} />
           </div>
 
           {/* Right Column (4 cols): Sticky Quick Facts & Transportation */}
           <div className="lg:col-span-4 space-y-6">
+            {/* 1. 實時海象浪況模擬分析儀（置於右側欄最上方） */}
+            <SpotSimulatorSidebarCard spot={spot} />
+
             {/* Quick Specs Card */}
             <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
               <h3 className="text-base font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-slate-800 pb-3">

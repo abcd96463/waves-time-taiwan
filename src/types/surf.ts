@@ -13,6 +13,22 @@ export interface SpotLiveCondition {
   tideStatus?: string; // 潮位，例如 "中潮起漲"
 }
 
+export interface TideEvent {
+  type: 'high' | 'low';
+  time: string;
+  height: string;
+  label: string;
+}
+
+export interface TideForecastData {
+  todaySummary: string;
+  currentTideHeight: string;
+  currentPhase: string;
+  events: TideEvent[];
+  bestSurfingWindow: string;
+  hourlyCurve: { hour: number; height: number; timeStr: string }[];
+}
+
 export interface SurfSpot {
   id: string;
   nameZh: string;
@@ -38,6 +54,7 @@ export interface SurfSpot {
   description: string;
   briefIntro?: string; // 浪點簡介（浮動框顯示）
   liveCondition?: SpotLiveCondition; // 湧浪大小 週期 風速
+  tideForecast?: TideForecastData; // 潮汐滿退潮時間與圖表預報
   insiderTip: string;
   image: string;
   lat: number;

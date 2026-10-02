@@ -74,7 +74,7 @@ export default function App() {
         {selectedSpotDetail ? (
           <SpotDetailPage
             spot={selectedSpotDetail}
-            onBack={() => setSelectedSpotDetail(null)}
+            onBack={handleExploreSpots}
             onOpenSimulator={handleSelectSpotForSimulation}
             onSelectSpot={(spot) => setSelectedSpotDetail(spot)}
           />

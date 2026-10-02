@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { SURF_SPOTS } from '../data/surfData';
 import { SurfSpot } from '../types/surf';
+import { calculateSpotSurfScore } from '../utils/surfScoreUtils';
 import { Compass, Waves, ArrowRight, MapPin, Sparkles } from 'lucide-react';
 
 interface TaiwanSpotsMapProps {
@@ -39,10 +40,10 @@ const ILLUSTRATION_SPOTS: SpotMarkerConfig[] = [
   { id: 'kenting_southbay', name: '南灣', pin: { x: 286, y: 928 }, badge: { x: 245, y: 948, w: 86, h: 44 } },
 
   // 西部
-  { id: 'cijin', name: '旗津', pin: { x: 216, y: 755 }, badge: { x: 135, y: 765, w: 86, h: 44 } },
-  { id: 'yuguang_island', name: '漁光島', pin: { x: 196, y: 655 }, badge: { x: 80, y: 650, w: 104, h: 44 } },
-  { id: 'songbo_harbour', name: '松柏港', pin: { x: 248, y: 415 }, badge: { x: 145, y: 405, w: 104, h: 44 } },
-  { id: 'zhunan_holiday_forest', name: '假日之森', pin: { x: 305, y: 335 }, badge: { x: 185, y: 325, w: 128, h: 44 } },
+  { id: 'cijin', name: '旗津', pin: { x: 216, y: 755 }, badge: { x: 105, y: 765, w: 86, h: 44 } },
+  { id: 'yuguang_island', name: '漁光島', pin: { x: 196, y: 655 }, badge: { x: 55, y: 650, w: 104, h: 44 } },
+  { id: 'songbo_harbour', name: '松柏港', pin: { x: 248, y: 415 }, badge: { x: 45, y: 405, w: 104, h: 44 } },
+  { id: 'zhunan_holiday_forest', name: '假日之森', pin: { x: 305, y: 335 }, badge: { x: 70, y: 325, w: 128, h: 44 } },
 ];
 
 export const TaiwanSpotsMap: React.FC<TaiwanSpotsMapProps> = ({ onSelectSpot }) => {
@@ -51,6 +52,11 @@ export const TaiwanSpotsMap: React.FC<TaiwanSpotsMapProps> = ({ onSelectSpot }) 
   const [activeSpot, setActiveSpot] = useState<SurfSpot>(() => {
     return SURF_SPOTS.find((s) => s.id === 'jinzun') || SURF_SPOTS[0];
   });
+
+  // Calculate live surf score for the active spot
+  const activeSpotAnalysis = useMemo(() => {
+    return calculateSpotSurfScore(activeSpot);
+  }, [activeSpot]);
 
   const handleSpotInteract = (spotId: string) => {
     const found = SURF_SPOTS.find((s) => s.id === spotId);
@@ -221,15 +227,15 @@ export const TaiwanSpotsMap: React.FC<TaiwanSpotsMapProps> = ({ onSelectSpot }) 
               <path
                 id="refinedTaiwanLand"
                 d="
-                  M 450 118
-                  C 462 118, 474 122, 482 128
-                  C 494 134, 506 132, 514 138
-                  C 522 144, 532 152, 542 156
-                  C 555 162, 570 172, 582 186
-                  C 590 196, 592 208, 584 218
-                  C 576 226, 568 238, 560 252
-                  C 552 268, 546 285, 542 305
-                  C 536 325, 532 345, 530 365
+                  M 452 115
+                  C 465 115, 474 121, 482 126
+                  C 492 130, 502 128, 510 134
+                  C 518 140, 528 148, 536 152
+                  C 550 158, 565 168, 576 182
+                  C 585 192, 588 205, 582 216
+                  C 575 224, 568 236, 560 250
+                  C 552 266, 546 284, 542 304
+                  C 536 324, 532 344, 530 365
                   C 528 385, 532 400, 526 415
                   C 520 430, 514 448, 506 465
                   C 498 480, 488 498, 478 518
@@ -249,11 +255,12 @@ export const TaiwanSpotsMap: React.FC<TaiwanSpotsMapProps> = ({ onSelectSpot }) 
                   C 200 680, 196 655, 194 630
                   C 192 605, 194 580, 198 555
                   C 202 530, 208 505, 218 480
-                  C 228 455, 240 430, 256 405
-                  C 272 380, 290 355, 310 330
-                  C 330 305, 350 280, 372 255
-                  C 392 230, 410 205, 426 180
-                  C 434 165, 438 148, 442 135
+                  C 228 455, 240 430, 254 410
+                  C 268 388, 282 365, 302 340
+                  C 320 315, 338 290, 355 268
+                  C 372 245, 388 220, 404 196
+                  C 416 178, 424 162, 428 152
+                  C 434 138, 442 124, 452 115
                   Z
                 "
                 fill="url(#vastIslandGrad)"
@@ -491,14 +498,27 @@ export const TaiwanSpotsMap: React.FC<TaiwanSpotsMapProps> = ({ onSelectSpot }) 
                 </div>
               </div>
 
-              {/* 1. 浪點名稱 (Spot Name) */}
-              <div>
-                <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-baseline gap-2">
-                  <span>{activeSpot.nameZh}</span>
-                </h3>
-                <p className="text-xs font-medium text-cyan-300/90 uppercase tracking-wider mt-0.5 font-mono">
-                  {activeSpot.nameEn}
-                </p>
+              {/* 1. 浪點名稱 (Spot Name) 與 浪況綜合評分 (Score) */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-baseline gap-2">
+                    <span>{activeSpot.nameZh}</span>
+                  </h3>
+                  <p className="text-xs font-medium text-cyan-300/90 uppercase tracking-wider mt-0.5 font-mono truncate">
+                    {activeSpot.nameEn}
+                  </p>
+                </div>
+
+                {/* 浪況綜合評分 (放在浪點名稱旁/右上) */}
+                <div className="shrink-0 bg-slate-950/90 border border-cyan-400/50 rounded-2xl px-3 py-1.5 shadow-lg flex flex-col items-end">
+                  <span className="text-[10px] text-slate-400 font-bold tracking-wider uppercase">浪況綜合評分</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-2xl sm:text-3xl font-black font-mono text-cyan-300">
+                      {activeSpotAnalysis.finalScore}
+                    </span>
+                    <span className="text-xs text-slate-500 font-mono">/100</span>
+                  </div>
+                </div>
               </div>
 
               {/* 2. 湧浪大小 週期 風速 (Swell Size, Period, Wind Speed) - Ordered Exactly As Requested */}
