@@ -580,12 +580,12 @@ export const TaiwanSpotsMap: React.FC<TaiwanSpotsMapProps> = ({ onSelectSpot }) 
                 </span>
               </div>
 
-              {/* 4. Action Button: 點進去後進入詳細介紹分頁 */}
+              {/* 4. Action Button: 點進去後進入詳細介紹 */}
               <button
                 onClick={() => onSelectSpot(activeSpot)}
                 className="w-full mt-2 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black text-sm flex items-center justify-center gap-2 shadow-xl shadow-cyan-500/25 transition-all hover:scale-[1.01] active:scale-[0.99]"
               >
-                <span>進入「{activeSpot.shortName || activeSpot.nameZh.split(' ')[0]}」詳細介紹分頁</span>
+                <span>進入「{activeSpot.shortName || activeSpot.nameZh.split(' ')[0]}」詳細介紹</span>
                 <ArrowRight className="h-4 w-4" />
               </button>
             </div>

@@ -74,7 +74,7 @@ export const SpotDetailPage: React.FC<SpotDetailPageProps> = ({
           src={spot.image}
           alt={spot.nameZh}
           onError={(e) => {
-            (e.target as HTMLImageElement).src = '/src/assets/images/hero_taitung_jinzun_surf_1790862309376.jpg';
+            (e.target as HTMLImageElement).src = '/images/spots/default.jpg';
           }}
           className="w-full h-full object-cover object-center filter brightness-90 transition-transform duration-700 hover:scale-105"
         />
