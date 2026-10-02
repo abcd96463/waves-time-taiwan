@@ -3,6 +3,7 @@ import { SurfSpot } from '../types/surf';
 import { SURF_SPOTS } from '../data/surfData';
 import { TideChartSection } from './TideChartSection';
 import { SpotSimulatorSidebarCard } from './SpotSimulatorSidebarCard';
+import { getSpotImageUrl, EXTERNAL_SPOT_FALLBACKS } from '../utils/spotImages';
 import { 
   ArrowLeft, 
   MapPin, 
@@ -71,10 +72,15 @@ export const SpotDetailPage: React.FC<SpotDetailPageProps> = ({
       {/* Hero Header with Visual Imagery */}
       <div className="relative w-full h-[380px] sm:h-[460px] overflow-hidden bg-slate-900">
         <img
-          src={spot.image}
+          src={getSpotImageUrl(spot.id, spot.image)}
           alt={spot.nameZh}
+          loading="eager"
           onError={(e) => {
-            (e.target as HTMLImageElement).src = '/images/spots/default.jpg';
+            const target = e.currentTarget;
+            const fallback = EXTERNAL_SPOT_FALLBACKS[spot.id] || EXTERNAL_SPOT_FALLBACKS.default;
+            if (target.src !== fallback) {
+              target.src = fallback;
+            }
           }}
           className="w-full h-full object-cover object-center filter brightness-90 transition-transform duration-700 hover:scale-105"
         />

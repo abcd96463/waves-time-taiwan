@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { SURF_SPOTS } from '../data/surfData';
 import { SurfSpot, SurfLevel, WaveType } from '../types/surf';
+import { getSpotImageUrl, EXTERNAL_SPOT_FALLBACKS } from '../utils/spotImages';
 import { MapPin, Waves, Compass, Wind, AlertTriangle, ChevronRight, X, Sparkles, Trophy } from 'lucide-react';
 
 interface SpotExplorerProps {
@@ -161,12 +162,16 @@ export const SpotExplorer: React.FC<SpotExplorerProps> = ({ onSelectSpotForSimul
             {/* Visual Image container with fallback */}
             <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-850">
               <img
-                src={spot.image}
+                src={getSpotImageUrl(spot.id, spot.image)}
                 alt={spot.nameZh}
-                referrerPolicy="no-referrer"
+                loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 onError={(e) => {
-                  e.currentTarget.style.display = 'none';
+                  const target = e.currentTarget;
+                  const fallback = EXTERNAL_SPOT_FALLBACKS[spot.id] || EXTERNAL_SPOT_FALLBACKS.default;
+                  if (target.src !== fallback) {
+                    target.src = fallback;
+                  }
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
@@ -262,12 +267,16 @@ export const SpotExplorer: React.FC<SpotExplorerProps> = ({ onSelectSpotForSimul
             {/* Image banner inside modal */}
             <div className="mt-5 relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-slate-800">
               <img
-                src={activeSpot.image}
+                src={getSpotImageUrl(activeSpot.id, activeSpot.image)}
                 alt={activeSpot.nameZh}
-                referrerPolicy="no-referrer"
+                loading="eager"
                 className="h-full w-full object-cover"
                 onError={(e) => {
-                  e.currentTarget.style.display = 'none';
+                  const target = e.currentTarget;
+                  const fallback = EXTERNAL_SPOT_FALLBACKS[activeSpot.id] || EXTERNAL_SPOT_FALLBACKS.default;
+                  if (target.src !== fallback) {
+                    target.src = fallback;
+                  }
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />

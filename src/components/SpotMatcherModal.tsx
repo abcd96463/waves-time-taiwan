@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SURF_SPOTS } from '../data/surfData';
 import { SurfSpot } from '../types/surf';
+import { getSpotImageUrl, EXTERNAL_SPOT_FALLBACKS } from '../utils/spotImages';
 import { X, Sparkles, Check, ArrowRight, RotateCcw, Compass, MapPin } from 'lucide-react';
 
 interface SpotMatcherModalProps {
@@ -213,10 +214,17 @@ export const SpotMatcherModal: React.FC<SpotMatcherModalProps> = ({ isOpen, onCl
             <div className="mt-5 text-left rounded-xl border border-slate-800 bg-slate-850 overflow-hidden">
               <div className="relative aspect-[16/9] w-full">
                 <img
-                  src={recommendedSpot.image}
+                  src={getSpotImageUrl(recommendedSpot.id, recommendedSpot.image)}
                   alt={recommendedSpot.nameZh}
-                  referrerPolicy="no-referrer"
+                  loading="eager"
                   className="h-full w-full object-cover"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    const fallback = EXTERNAL_SPOT_FALLBACKS[recommendedSpot.id] || EXTERNAL_SPOT_FALLBACKS.default;
+                    if (target.src !== fallback) {
+                      target.src = fallback;
+                    }
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-transparent" />
                 <div className="absolute bottom-3 left-3 text-xs text-white">
