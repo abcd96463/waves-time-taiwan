@@ -18,6 +18,10 @@ export interface TideEvent {
   time: string;
   height: string;
   label: string;
+  hour?: number;
+  heightNum?: number;
+  isNext?: boolean;
+  isPast?: boolean;
 }
 
 export interface TideForecastData {
@@ -27,6 +31,19 @@ export interface TideForecastData {
   events: TideEvent[];
   bestSurfingWindow: string;
   hourlyCurve: { hour: number; height: number; timeStr: string }[];
+  currentTimeStr?: string;
+  currentHour?: number;
+  currentHeightVal?: number;
+  currentTrend?: 'rising' | 'falling';
+  currentStatusDescription?: string;
+  nextEvent?: {
+    type: 'high' | 'low';
+    time: string;
+    label: string;
+    countdownStr: string;
+  };
+  tideDateStr?: string;
+  lunarPhaseDescription?: string;
 }
 
 export interface SurfSpot {
