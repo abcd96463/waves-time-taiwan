@@ -4,6 +4,7 @@ import { SURF_SPOTS } from '../data/surfData';
 import { TideChartSection } from './TideChartSection';
 import { SpotSimulatorSidebarCard } from './SpotSimulatorSidebarCard';
 import { getSpotImageUrl, EXTERNAL_SPOT_FALLBACKS } from '../utils/spotImages';
+import { useLanguage } from '../context/LanguageContext';
 import { 
   ArrowLeft, 
   MapPin, 
@@ -23,16 +24,16 @@ import {
 interface SpotDetailPageProps {
   spot: SurfSpot;
   onBack: () => void;
-  onOpenSimulator: (spot: SurfSpot) => void;
   onSelectSpot: (spot: SurfSpot) => void;
 }
 
 export const SpotDetailPage: React.FC<SpotDetailPageProps> = ({
   spot,
   onBack,
-  onOpenSimulator,
   onSelectSpot,
 }) => {
+  const { lang, t } = useLanguage();
+
   // Scroll to top when spot detail mounts or changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -48,23 +49,16 @@ export const SpotDetailPage: React.FC<SpotDetailPageProps> = ({
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <button
             onClick={onBack}
-            className="group flex items-center gap-2 text-sm font-bold text-cyan-400 hover:text-cyan-300 transition-colors py-1 px-2.5 -ml-2.5 rounded-lg hover:bg-slate-900"
+            className="group flex items-center gap-2 text-sm font-bold text-cyan-400 hover:text-cyan-300 transition-colors py-1 px-2.5 -ml-2.5 rounded-lg hover:bg-slate-900 cursor-pointer"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            <span>返回全臺浪點地圖</span>
+            <span>{lang === 'zh' ? '返回全臺浪點地圖' : 'Back to Taiwan Surf Map'}</span>
           </button>
 
           <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-400 hidden sm:inline">
+            <span className="text-xs text-slate-400">
               {spot.regionLabel} · {spot.township}
             </span>
-            <button
-              onClick={() => onOpenSimulator(spot)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 rounded-lg hover:bg-cyan-500/20 transition-colors"
-            >
-              <Sliders className="h-3.5 w-3.5" />
-              <span>海況模擬</span>
-            </button>
           </div>
         </div>
       </div>
@@ -90,7 +84,7 @@ export const SpotDetailPage: React.FC<SpotDetailPageProps> = ({
         {/* Real Spot Photography Badge */}
         <div className="absolute top-4 right-4 z-10 px-3 py-1.5 bg-black/60 backdrop-blur-md rounded-full border border-white/15 text-[11px] text-slate-200 font-medium flex items-center gap-1.5 shadow-lg">
           <Camera className="h-3.5 w-3.5 text-cyan-400" />
-          <span>{spot.shortName || spot.nameZh.slice(0, 3)} 實地浪點美照</span>
+          <span>{lang === 'zh' ? `${spot.shortName || spot.nameZh.slice(0, 3)} 實地浪點美照` : `${spot.nameEn.split('(')[0].trim()} Photography`}</span>
         </div>
 
         {/* Hero Content */}
@@ -100,21 +94,21 @@ export const SpotDetailPage: React.FC<SpotDetailPageProps> = ({
               {spot.regionLabel || '全臺浪點'}
             </span>
             <span className="text-xs font-semibold bg-slate-900/90 text-slate-200 border border-slate-700 px-3 py-1 rounded-md backdrop-blur-md">
-              {spot.levelLabel}
+              {lang === 'zh' ? spot.levelLabel : (spot.level === 'beginner' ? 'Beginner Friendly' : spot.level === 'intermediate' ? 'Intermediate' : 'Advanced Only')}
             </span>
             {spot.isWSLSpot && (
               <span className="text-xs font-bold bg-amber-500/90 text-slate-950 px-3 py-1 rounded-md flex items-center gap-1">
                 <Sparkles className="h-3 w-3" />
-                WSL 國際公開賽主場
+                {lang === 'zh' ? 'WSL 國際公開賽主場' : 'WSL Championship Arena'}
               </span>
             )}
           </div>
 
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight">
-            {spot.nameZh}
+            {lang === 'zh' ? spot.nameZh : spot.nameEn.split('(')[0].trim()}
           </h1>
           <p className="text-sm sm:text-lg font-mono text-cyan-300/90 mt-1 uppercase tracking-wider">
-            {spot.nameEn}
+            {lang === 'zh' ? spot.nameEn : spot.nameZh}
           </p>
 
           <div className="flex flex-wrap items-center gap-4 mt-4 text-xs sm:text-sm text-slate-300">

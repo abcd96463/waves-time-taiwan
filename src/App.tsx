@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import { LanguageProvider } from './context/LanguageContext';
 import { Navbar } from './components/Navbar';
 import { VideoHero } from './components/VideoHero';
 import { Hero } from './components/Hero';
 import { TaiwanSpotsMap } from './components/TaiwanSpotsMap';
 import { SpotDetailPage } from './components/SpotDetailPage';
-import { SurfForecastSimulator } from './components/SurfForecastSimulator';
+import { TaiwanIntroPage } from './components/TaiwanIntroPage';
 import { SeasonGuide } from './components/SeasonGuide';
 import { SurferAcademy } from './components/SurferAcademy';
 import { TripPlanner } from './components/TripPlanner';
@@ -14,19 +15,8 @@ import { SurfSpot } from './types/surf';
 
 export default function App() {
   const [isQuizOpen, setIsQuizOpen] = useState(false);
-  const [selectedSpotForSim, setSelectedSpotForSim] = useState<SurfSpot | null>(null);
+  const [isTaiwanIntroOpen, setIsTaiwanIntroOpen] = useState(false);
   const [selectedSpotDetail, setSelectedSpotDetail] = useState<SurfSpot | null>(null);
-
-  const handleSelectSpotForSimulation = (spot: SurfSpot) => {
-    setSelectedSpotForSim(spot);
-    setSelectedSpotDetail(null);
-    setTimeout(() => {
-      const simElement = document.getElementById('simulator');
-      if (simElement) {
-        simElement.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100);
-  };
 
   const handleScrollToContent = () => {
     const el = document.getElementById('content');
@@ -35,8 +25,26 @@ export default function App() {
     }
   };
 
+  const handleNavigateTaiwanIntro = () => {
+    setSelectedSpotDetail(null);
+    setIsTaiwanIntroOpen(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleBackToHero = () => {
+    setSelectedSpotDetail(null);
+    setIsTaiwanIntroOpen(false);
+    setTimeout(() => {
+      const el = document.getElementById('content');
+      if (el) {
+        el.scrollIntoView({ behavior: 'instant' });
+      }
+    }, 40);
+  };
+
   const handleExploreSpots = () => {
     setSelectedSpotDetail(null);
+    setIsTaiwanIntroOpen(false);
     setTimeout(() => {
       const el = document.getElementById('spots');
       if (el) {
@@ -45,84 +53,85 @@ export default function App() {
     }, 50);
   };
 
-  const handleOpenSimulator = () => {
-    setSelectedSpotDetail(null);
-    setTimeout(() => {
-      const el = document.getElementById('simulator');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 50);
-  };
-
   const handleGoHome = () => {
     setSelectedSpotDetail(null);
+    setIsTaiwanIntroOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-400 selection:text-slate-950">
-      {/* Top Navigation */}
-      <Navbar
-        onOpenQuiz={() => setIsQuizOpen(true)}
-        onNavigateSpots={handleExploreSpots}
-        onGoHome={handleGoHome}
-      />
+    <LanguageProvider>
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-400 selection:text-slate-950">
+        {/* Top Navigation Bar with 臺灣介紹 shortcut to the left of 全臺浪點 */}
+        <Navbar
+          onOpenQuiz={() => setIsQuizOpen(true)}
+          onNavigateTaiwanIntro={handleNavigateTaiwanIntro}
+          onNavigateSpots={handleExploreSpots}
+          onGoHome={handleGoHome}
+        />
 
-      {/* Main Content: Either Dedicated Spot Detail Page OR Full Home Experience with Taiwan Map */}
-      <main className="flex-1">
-        {selectedSpotDetail ? (
-          <SpotDetailPage
-            spot={selectedSpotDetail}
-            onBack={handleExploreSpots}
-            onOpenSimulator={handleSelectSpotForSimulation}
-            onSelectSpot={(spot) => setSelectedSpotDetail(spot)}
-          />
-        ) : (
-          <>
-            {/* Full-Screen Video Hero at the very top */}
-            <VideoHero onScrollDown={handleScrollToContent} />
-
-            {/* Text & Intro Hero Section */}
-            <Hero
+        {/* Main Content Area */}
+        <main className="flex-1">
+          {isTaiwanIntroOpen ? (
+            /* Dedicated Taiwan Intro Page (介紹台灣分頁) */
+            <TaiwanIntroPage
+              onBack={handleBackToHero}
               onExploreSpots={handleExploreSpots}
-              onOpenSimulator={handleOpenSimulator}
               onOpenQuiz={() => setIsQuizOpen(true)}
             />
-
-            {/* Taiwan Island Shape Map with Hover Popover Box & Direct Spot Navigation */}
-            <TaiwanSpotsMap
-              onSelectSpot={(spot) => {
-                setSelectedSpotDetail(spot);
-              }}
+          ) : selectedSpotDetail ? (
+            /* Dedicated Surf Spot Guide Page */
+            <SpotDetailPage
+              spot={selectedSpotDetail}
+              onBack={handleExploreSpots}
+              onSelectSpot={(spot) => setSelectedSpotDetail(spot)}
             />
+          ) : (
+            /* Main Surf Island Home Experience (Surf Forecast Simulator removed) */
+            <>
+              {/* Full-Screen Video Hero at the very top */}
+              <VideoHero onScrollDown={handleScrollToContent} />
 
-            {/* Interactive Oceanography Simulator (Tide, Period, Wind, Height) */}
-            <SurfForecastSimulator initialSpot={selectedSpotForSim} />
+              {/* Text & Intro Hero Section with 詳細了解台灣 button */}
+              <Hero
+                onExploreSpots={handleExploreSpots}
+                onOpenTaiwanIntro={handleNavigateTaiwanIntro}
+                onOpenQuiz={() => setIsQuizOpen(true)}
+              />
 
-            {/* Four Seasons in Taiwan & WSL Open Feature */}
-            <SeasonGuide />
+              {/* Taiwan Island Shape Map with Hover Popover Box & Direct Spot Navigation */}
+              <TaiwanSpotsMap
+                onSelectSpot={(spot) => {
+                  setSelectedSpotDetail(spot);
+                  setIsTaiwanIntroOpen(false);
+                }}
+              />
 
-            {/* Ocean Etiquette & Surfboard Selection Academy */}
-            <SurferAcademy />
+              {/* Four Seasons in Taiwan & WSL Open Feature */}
+              <SeasonGuide />
 
-            {/* Road Trip Planner & Packing Checklist */}
-            <TripPlanner />
-          </>
-        )}
-      </main>
+              {/* Ocean Etiquette & Surfboard Selection Academy */}
+              <SurferAcademy />
 
-      {/* Spot Matcher Quiz Modal */}
-      <SpotMatcherModal
-        isOpen={isQuizOpen}
-        onClose={() => setIsQuizOpen(false)}
-        onSelectSpot={(spot) => {
-          setSelectedSpotDetail(spot);
-        }}
-      />
+              {/* Road Trip Planner & Packing Checklist */}
+              <TripPlanner />
+            </>
+          )}
+        </main>
 
-      {/* Quiet Footer */}
-      <Footer />
-    </div>
+        {/* Spot Matcher Quiz Modal */}
+        <SpotMatcherModal
+          isOpen={isQuizOpen}
+          onClose={() => setIsQuizOpen(false)}
+          onSelectSpot={(spot) => {
+            setSelectedSpotDetail(spot);
+            setIsTaiwanIntroOpen(false);
+          }}
+        />
+
+        {/* Quiet Footer */}
+        <Footer />
+      </div>
+    </LanguageProvider>
   );
 }

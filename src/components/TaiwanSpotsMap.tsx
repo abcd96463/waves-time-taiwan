@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { SURF_SPOTS } from '../data/surfData';
 import { SurfSpot } from '../types/surf';
 import { calculateSpotSurfScore } from '../utils/surfScoreUtils';
+import { useLanguage } from '../context/LanguageContext';
 import { Compass, Waves, ArrowRight, MapPin, Sparkles } from 'lucide-react';
 
 interface TaiwanSpotsMapProps {
@@ -47,6 +48,7 @@ const ILLUSTRATION_SPOTS: SpotMarkerConfig[] = [
 ];
 
 export const TaiwanSpotsMap: React.FC<TaiwanSpotsMapProps> = ({ onSelectSpot }) => {
+  const { lang, t } = useLanguage();
   // LATCHED/FIXED STATE: Starts at 金樽, permanently updates when hovering or clicking ANY spot
   // 「我不要自動回歸，我要固定在我滑鼠移動到的那個浪點」
   const [activeSpot, setActiveSpot] = useState<SurfSpot>(() => {
@@ -71,13 +73,15 @@ export const TaiwanSpotsMap: React.FC<TaiwanSpotsMapProps> = ({ onSelectSpot }) 
       <div className="text-center max-w-3xl mx-auto mb-8">
         <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-cyan-400 uppercase bg-cyan-950/60 border border-cyan-500/30 px-4 py-1.5 rounded-full mb-3 shadow-md">
           <Compass className="h-3.5 w-3.5 text-cyan-400" />
-          <span>全臺浪點地圖 · LET'S SURF TAIWAN</span>
+          <span>{lang === 'zh' ? "全臺浪點地圖 · LET'S SURF TAIWAN" : "TAIWAN SURF MAP · PACIFIC SWELLS"}</span>
         </div>
         <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-          全臺經典衝浪地圖
+          {lang === 'zh' ? '全臺經典衝浪地圖' : 'Taiwan Iconic Surf Breaks Map'}
         </h2>
         <p className="mt-3 text-sm sm:text-base text-slate-300 leading-relaxed">
-          細緻台灣地理輪廓與環島 20 大浪點標籤，滑鼠移動即時固定顯示海況數值與簡介。
+          {lang === 'zh' 
+            ? '細緻台灣地理輪廓與環島 20 大浪點標籤，滑鼠移動即時固定顯示海況數值與簡介。'
+            : 'Explore 20 iconic surf breaks around Taiwan. Hover or tap any spot on the coastline to inspect real-time swell and conditions.'}
         </p>
       </div>
 
@@ -463,10 +467,10 @@ export const TaiwanSpotsMap: React.FC<TaiwanSpotsMapProps> = ({ onSelectSpot }) 
           <div className="mt-2 text-xs text-white/90 flex items-center justify-between w-full max-w-[550px] px-3 bg-black/35 py-2 rounded-xl border border-white/10">
             <span className="flex items-center gap-1.5 font-bold text-cyan-300">
               <span className="h-2.5 w-2.5 rounded-full bg-cyan-400"></span>
-              滑鼠移到浪點即可固定觀看該浪點海況
+              {t('map.hint')}
             </span>
             <span className="text-[11px] text-amber-300 font-semibold">
-              目前固定：{activeSpot.shortName || activeSpot.nameZh.slice(0, 3)}
+              {t('map.pinned')}{lang === 'zh' ? (activeSpot.shortName || activeSpot.nameZh.slice(0, 3)) : activeSpot.nameEn.split('(')[0].trim()}
             </span>
           </div>
         </div>
@@ -585,7 +589,11 @@ export const TaiwanSpotsMap: React.FC<TaiwanSpotsMapProps> = ({ onSelectSpot }) 
                 onClick={() => onSelectSpot(activeSpot)}
                 className="w-full mt-2 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black text-sm flex items-center justify-center gap-2 shadow-xl shadow-cyan-500/25 transition-all hover:scale-[1.01] active:scale-[0.99]"
               >
-                <span>進入「{activeSpot.shortName || activeSpot.nameZh.split(' ')[0]}」詳細介紹</span>
+                <span>
+                  {lang === 'zh'
+                    ? `進入「${activeSpot.shortName || activeSpot.nameZh.split(' ')[0]}」詳細介紹`
+                    : `${t('map.enterDetail')} · ${activeSpot.nameEn.split('(')[0].trim()}`}
+                </span>
                 <ArrowRight className="h-4 w-4" />
               </button>
             </div>
@@ -594,8 +602,8 @@ export const TaiwanSpotsMap: React.FC<TaiwanSpotsMapProps> = ({ onSelectSpot }) 
           {/* Quick 20 Spots Selector Grid */}
           <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4">
             <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5 flex items-center justify-between">
-              <span>全臺 20 大浪點快速切換</span>
-              <span className="text-[11px] text-cyan-400">點擊即固定</span>
+              <span>{t('map.quickSwitch')}</span>
+              <span className="text-[11px] text-cyan-400">{t('map.clickToPin')}</span>
             </div>
             <div className="grid grid-cols-4 sm:grid-cols-5 lg:grid-cols-4 gap-1.5">
               {ILLUSTRATION_SPOTS.map((spotCfg) => {
